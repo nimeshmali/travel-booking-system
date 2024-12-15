@@ -6,26 +6,9 @@ const app = express();
 let isConnected = false; // Track MongoDB connection status
 const PORT = 3000;
 // MongoDB connection function
-async function connectToDatabase() {
-  if (isConnected) {
-    console.log("Using existing MongoDB connection");
-    return;
-  }
+const connectDB = require("./connect");
 
-  try {
-    console.log("Connecting to MongoDB...");
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    isConnected = true;
-    console.log("Connected to MongoDB");
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
-    throw error;
-  }
-}
-
+// connectDB();
 // Define schema and model
 const catSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -35,10 +18,10 @@ const Cat = mongoose.model("Cat", catSchema);
 // Define routes
 app.get("/", async (req, res) => {
   try {
-    await connectToDatabase(); // Ensure database connection
+    await connectDB(); // Ensure database connection
 
     const newCat = new Cat({ name: "julie" });
-    await newCat.save();
+    const data = await newCat.save();
 
     res.send('Added a cat named "julie" to the database!');
   } catch (error) {
