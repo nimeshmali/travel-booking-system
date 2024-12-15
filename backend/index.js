@@ -6,6 +6,11 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors());
+app.use(
+  cors({
+    origin: "https://travel-booking-system-frontend.vercel.app/",
+  })
+);
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 const PORT = 3000;
