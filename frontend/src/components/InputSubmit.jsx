@@ -19,13 +19,16 @@ const InputSubmit = () => {
 
     try {
       // Send POST request to backend
-      const response = await fetch("http://localhost:3000/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ data: inputValue }),
-      });
+      const response = await fetch(
+        "https://travel-booking-system-nine.vercel.app/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: inputValue }),
+        }
+      );
 
       // Check if response is ok
       if (!response.ok) {
