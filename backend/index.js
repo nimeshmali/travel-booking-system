@@ -3,32 +3,46 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
+let isConnected = false; // Track MongoDB connection status
 const PORT = 3000;
+// MongoDB connection function
+async function connectToDatabase() {
+  if (isConnected) {
+    console.log("Using existing MongoDB connection");
+    return;
+  }
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Failed to connect to MongoDB:", err));
+  try {
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    throw error;
+  }
+}
 
-// Define a schema for the "cats" collection
+// Define schema and model
 const catSchema = new mongoose.Schema({
   name: { type: String, required: true },
 });
-
-// Create a model for the schema
 const Cat = mongoose.model("Cat", catSchema);
 
-// Define a route to handle GET requests
+// Define routes
 app.get("/", async (req, res) => {
   try {
-    // Create and save a new cat document
+    await connectToDatabase(); // Ensure database connection
+
     const newCat = new Cat({ name: "julie" });
     await newCat.save();
 
-    res.status(200).send('Added a cat named "julie" to the database!');
-  } catch (err) {
-    console.error("Error while saving the cat:", err);
+    res.send('Added a cat named "julie" to the database!');
+  } catch (error) {
+    console.error("Error:", error);
     res.status(500).send("Failed to add the cat.");
   }
 });
