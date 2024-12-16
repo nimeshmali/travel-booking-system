@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { MapPin, Calendar, DollarSign } from "lucide-react";
+import { MapPin, Calendar, DollarSign, IndianRupeeIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ packageData, onBookNow }) => {
@@ -32,7 +32,7 @@ const Card = ({ packageData, onBookNow }) => {
         {/* Package Details */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <DollarSign className="w-5 h-5 text-gray-600" />
+            <IndianRupeeIcon className="w-5 h-5 text-gray-600" />
             <span className="text-lg font-semibold text-gray-800">{price}</span>
           </div>
 

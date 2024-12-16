@@ -15,10 +15,10 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gray-100">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div className="container mx-auto px-4 pt-5 flex justify-between items-center">
         <Link
           to="/"
-          className="text-2xl font-bold text-blue-600 hover:text-blue-800 transition duration-300"
+          className="text-3xl font-bold text-gray-600 hover:text-gray-800 transition duration-300"
         >
           TravelBuddy
         </Link>
