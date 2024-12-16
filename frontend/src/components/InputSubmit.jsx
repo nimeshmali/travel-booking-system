@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const InputSubmit = () => {
+const InputSubmitComponent = () => {
   // State to manage input value
   const [inputValue, setInputValue] = useState("");
   // State to manage submission response
@@ -19,16 +19,13 @@ const InputSubmit = () => {
 
     try {
       // Send POST request to backend
-      const response = await fetch(
-        "https://travel-booking-system-nine.vercel.app/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: inputValue }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: inputValue }),
+      });
 
       // Check if response is ok
       if (!response.ok) {
@@ -48,6 +45,7 @@ const InputSubmit = () => {
       setError("");
     } catch (err) {
       // Handle any errors during submission
+      console.log("yaha bt hai");
       setError(err.message || "An error occurred");
       setResponse("");
     }
@@ -94,4 +92,4 @@ const InputSubmit = () => {
   );
 };
 
-export default InputSubmit;
+export default InputSubmitComponent;
