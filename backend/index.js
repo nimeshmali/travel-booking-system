@@ -215,15 +215,15 @@ app.delete("/admin/packages/:id", async (req, res) => {
 // to book the package
 app.post("/packages/book/:id", async (req, res) => {
   const { id } = req.params;
-  // console.log("yaha pe aaya");
   const { name, email, phoneNumber, numberOfTravelers, specialRequests } =
     req.body;
 
   try {
-    const package = await TourPackage.findById(id); // Verify if the package exists
+    console.log("Received booking request:", req.body); // Log incoming data
+
+    const package = await TourPackage.findById(id);
 
     if (!package) {
-      // console.log("yaha pe bt");
       return res.status(404).json({ error: "Package not found" });
     }
 
@@ -241,8 +241,12 @@ app.post("/packages/book/:id", async (req, res) => {
       .status(201)
       .json({ message: "Booking successful", booking: savedBooking });
   } catch (error) {
-    console.error("Error creating booking:", error);
-    res.status(500).json({ error: "Failed to create booking" });
+    console.error("Detailed Error creating booking:", error);
+    res.status(500).json({
+      error: "Failed to create booking",
+      details: error.message,
+      stack: error.stack,
+    });
   }
 });
 
