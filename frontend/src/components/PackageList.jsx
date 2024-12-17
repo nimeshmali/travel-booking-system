@@ -19,9 +19,9 @@ const PackagesList = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-4">
+    <div className="container mx-auto px-8 py-4">
       <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4 tracking-tight">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-4 tracking-tight">
           Discover Your Next Adventure
         </h1>
         <p className="text-xl text-gray-600 mx-auto">

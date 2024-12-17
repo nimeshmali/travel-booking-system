@@ -143,7 +143,7 @@ const PackageBookingPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 lg:flex lg:space-x-8 bg-gray-50 min-h-screen">
+    <div className="container mx-auto px-8 py-8 lg:flex lg:space-x-8 bg-gray-100 min-h-screen">
       {/* Package Details Section */}
       <div className="lg:w-1/2">
         <div className="bg-white shadow-2xl rounded-xl h-full transform transition-all ">

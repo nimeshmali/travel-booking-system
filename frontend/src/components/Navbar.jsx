@@ -1,45 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LogOutIcon, PackagePlusIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check admin status from localStorage when component mounts
+    const adminStatus = localStorage.getItem("isAdmin") === "true";
+    setIsAdmin(adminStatus);
+  }, []);
+
   const handleLogout = () => {
-    // TODO: Implement actual logout logic
-    // This might include:
-    // - Clearing authentication tokens
-    // - Resetting user session
-    // - Redirecting to login page
-    console.log("Logout clicked");
-    // Example: localStorage.removeItem('token');
-    // Example: navigate('/login');
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("isAdmin");
+    navigate("/login");
   };
 
   return (
     <nav className="bg-gray-100">
-      <div className="container mx-auto px-4 pt-5 flex justify-between items-center">
+      <div className="container mx-auto px-8 mb-5 pt-5 flex justify-between items-center">
         <Link
           to="/"
-          className="text-3xl font-bold text-gray-600 hover:text-gray-800 transition duration-300"
+          className="text-3xl font-bold text-gray-800 hover:text-gray-600 transition duration-300"
         >
           TravelBuddy
         </Link>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 flex items-center"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        <div className="flex items-center space-x-4">
+          {isAdmin && (
+            <Link
+              to="/manage-packages"
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300 flex items-center"
+            >
+              <PackagePlusIcon className="mr-2" />
+              Manage Packages
+            </Link>
+          )}
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 flex items-center"
           >
-            <path
-              fillRule="evenodd"
-              d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L14.586 11H7a1 1 0 110-2h7.586l-1.293-1.293a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Logout
-        </button>
+            <LogOutIcon className="mr-2" />
+            Logout
+          </button>
+        </div>
       </div>
     </nav>
   );

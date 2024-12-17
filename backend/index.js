@@ -43,6 +43,21 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.post("/auth/login", (req, res) => {
+  const { username, password } = req.body;
+
+  let isAdmin = false;
+  if (username === "admin@gmail.com") {
+    isAdmin = true;
+  }
+  // Simple login logic - always return status true
+  res.json({
+    status: true,
+    message: "Login successful",
+    admin: isAdmin,
+  });
+});
+
 app.post("/", async (req, res) => {
   try {
     await connectDB(); // Ensure database connection
