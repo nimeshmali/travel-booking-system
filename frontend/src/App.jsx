@@ -10,7 +10,7 @@ import PackagesList from "./components/PackageList";
 import BookingForm from "./components/BookingForm";
 import Login from "./components/Login";
 import TourPackageForm from "./components/TourPackageForm";
-
+import DeletePackage from "./components/DeletePackage";
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
@@ -56,7 +56,18 @@ function App() {
             element={
               <ProtectedRoute adminOnly={true}>
                 <Navbar />
+                {/* <TourPackageForm /> */}
+                <DeletePackage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-packages"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <Navbar />
                 <TourPackageForm />
+                {/* <DeletePackage /> */}
               </ProtectedRoute>
             }
           />

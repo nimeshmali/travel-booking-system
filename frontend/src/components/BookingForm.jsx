@@ -9,6 +9,7 @@ import {
   IndianRupeeIcon,
   UsersIcon,
 } from "lucide-react";
+import jsPDF from "jspdf";
 
 const PackageBookingPage = () => {
   const { id: packageId } = useParams();
@@ -26,6 +27,61 @@ const PackageBookingPage = () => {
     numberOfTravelers: 1,
     specialRequests: "",
   });
+
+  const generateInvoice = ({ packageDetails, formData }) => {
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(40);
+    doc.text("Booking Invoice", 105, 20, null, null, "center");
+
+    // Package Details
+    doc.setFontSize(12);
+    doc.text(`Package: ${packageDetails.title}`, 20, 40);
+
+    // Booking Details
+    doc.text(`Name: ${formData.name}`, 20, 60);
+    doc.text(`Email: ${formData.email}`, 20, 70);
+    doc.text(`Phone Number: ${formData.phoneNumber}`, 20, 80);
+    doc.text(`Number of Travelers: ${formData.numberOfTravelers}`, 20, 90);
+    doc.text(
+      `Special Requests: ${formData.specialRequests || "None"}`,
+      20,
+      100
+    );
+
+    // Pricing
+    const totalAmount = packageDetails.price * formData.numberOfTravelers;
+    doc.text(
+      `Price per Traveler: ₹${packageDetails.price.toLocaleString()}`,
+      20,
+      120
+    );
+    doc.text(`Total Amount: ₹${totalAmount.toLocaleString()}`, 20, 130);
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(
+      "Thank you for booking with us! Please retain this invoice for your records.",
+      20,
+      150
+    );
+
+    // Convert PDF to Blob and open in a new tab
+    const pdfBlob = doc.output("blob");
+    const pdfURL = URL.createObjectURL(pdfBlob);
+
+    // Open the PDF in a new tab
+    window.open(pdfURL);
+
+    // Optional: Trigger download
+    const a = document.createElement("a");
+    a.href = pdfURL;
+    a.download = "booking-invoice.pdf";
+    a.click();
+  };
 
   // Fetch package details
   useEffect(() => {
@@ -60,6 +116,10 @@ const PackageBookingPage = () => {
         `http://localhost:3000/packages/book/${packageId}`,
         formData
       );
+      generateInvoice({
+        packageDetails,
+        formData,
+      });
 
       alert(response.data.message || "Booking confirmed successfully!");
       navigate("/");
@@ -165,7 +225,7 @@ const PackageBookingPage = () => {
               {packageDetails.description}
             </p>
 
-            <div className="grid grid-cols-2 gap-4 text-gray-700">
+            <div className="grid grid-cols-2 gap-4 text-gray-700 mt-10">
               {startDate && (
                 <div className="flex items-center space-x-2">
                   <CalendarIcon className="w-7 h-7 text-blue-500" />
@@ -218,7 +278,7 @@ const PackageBookingPage = () => {
       {/* Booking Form Section */}
       <div className="lg:w-1/2 mx-auto">
         <div className="bg-white shadow-lg rounded-lg p-8 transform transition-all hover:shadow-xl">
-          <h2 className="text-3xl font-bold mb-8 text-center text-gray-600">
+          <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-700 text-white p-4 rounded-xl shadow-lg">
             Book Your Package
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -322,7 +382,7 @@ const PackageBookingPage = () => {
             <div>
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 rounded-md hover:from-blue-500 hover:to-blue-400 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-transform duration-300 transform hover:scale-105 active:scale-100"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 rounded-lg hover:opacity-90 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Confirm Booking
               </button>

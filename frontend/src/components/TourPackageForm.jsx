@@ -30,7 +30,6 @@ const TourPackageForm = () => {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      // Convert image to Base64 string
       setFormData((prevState) => ({
         ...prevState,
         image: reader.result,
@@ -79,16 +78,13 @@ const TourPackageForm = () => {
     e.preventDefault();
 
     try {
-      // Validate form data
       const { title, description, price, image, availableDates } = formData;
 
-      // Basic validation
       if (!title || !description || !price || !image) {
         alert("Please fill in all required fields");
         return;
       }
 
-      // Prepare data for submission
       const submissionData = {
         title,
         description,
@@ -100,7 +96,6 @@ const TourPackageForm = () => {
         })),
       };
 
-      // Send data to backend
       const response = await axios.post(
         "http://localhost:3000/admin/packages",
         submissionData
@@ -108,7 +103,6 @@ const TourPackageForm = () => {
 
       console.log("Package created:", response.data);
 
-      // Reset form after successful submission
       setFormData({
         title: "",
         description: "",
@@ -128,148 +122,153 @@ const TourPackageForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Create Tour Package
-      </h2>
-      <form onSubmit={handleSubmit}>
-        {/* Title Input */}
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="title"
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
+    <div className="container mx-auto px-8 py-8">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-700 text-white p-8 rounded-xl shadow-lg mb-8">
+        <h1 className="text-4xl font-bold mb-4 tracking-tight">
+          Create Tour Package
+        </h1>
+        <p className="text-xl opacity-90">
+          Add exciting travel packages to your catalog with ease
+        </p>
+      </div>
 
-        {/* Description Input */}
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="description"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-
-        {/* Price Input */}
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="price"
-          >
-            Price
-          </label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            min="0"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="image"
-          >
-            Package Image
-          </label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-          {formData.image && (
-            <img
-              src={formData.image}
-              alt="Preview"
-              className="mt-2 w-full h-40 object-cover rounded"
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <form onSubmit={handleSubmit}>
+          {/* Title Input */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Title
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              placeholder="Enter package title"
+              required
             />
-          )}
-        </div>
+          </div>
 
-        {/* Available Dates */}
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Available Dates
-          </label>
-          {formData.availableDates.map((date, index) => (
-            <div key={index} className="flex mb-2 items-center">
-              <div className="mr-2 flex-grow">
-                <label className="block text-xs text-gray-600">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  name="startDate"
-                  value={date.startDate}
-                  onChange={(e) => handleDateChange(index, e)}
-                  className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700"
-                  required
-                />
-              </div>
-              <div className="mr-2 flex-grow">
-                <label className="block text-xs text-gray-600">End Date</label>
-                <input
-                  type="date"
-                  name="endDate"
-                  value={date.endDate}
-                  onChange={(e) => handleDateChange(index, e)}
-                  className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700"
-                  required
-                />
-              </div>
-              {index > 0 && (
-                <button
-                  type="button"
-                  onClick={() => removeDateRange(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded mt-4"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+          {/* Description Input */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              placeholder="Enter package description"
+              required
+            />
+          </div>
 
-        {/* Submit Button */}
-        <div className="flex items-center justify-center">
+          {/* Price Input */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Price
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              min="0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              placeholder="Enter package price"
+              required
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Package Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              required
+            />
+            {formData.image && (
+              <img
+                src={formData.image}
+                alt="Preview"
+                className="mt-4 w-full h-48 object-cover rounded-lg"
+              />
+            )}
+          </div>
+
+          {/* Available Dates */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">
+              Available Dates
+            </label>
+            {formData.availableDates.map((date, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-3 gap-4 items-end mb-4"
+              >
+                <div>
+                  <label className="block text-xs text-gray-600">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={date.startDate}
+                    onChange={(e) => handleDateChange(index, e)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={date.endDate}
+                    onChange={(e) => handleDateChange(index, e)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => removeDateRange(index)}
+                    className="text-red-600 font-semibold hover:underline"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={addDateRange}
+            className="text-blue-500 font-semibold hover:underline"
+          >
+            + Add Another Date Range
+          </button>
+
+          {/* Submit Button */}
           <button
             type="submit"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-md hover:bg-purple-700 transition duration-300 flex items-center justify-center mt-6"
           >
-            Create Tour Package
+            Create Package
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
