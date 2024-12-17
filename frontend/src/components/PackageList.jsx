@@ -9,7 +9,9 @@ const PackagesList = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/packages");
+        const response = await axios.get(
+          "https://travel-booking-system-nine.vercel.app/packages"
+        );
         setPackages(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -97,7 +97,7 @@ const TourPackageForm = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/admin/packages",
+        "https://travel-booking-system-nine.vercel.app/admin/packages",
         submissionData
       );
 

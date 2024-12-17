@@ -88,7 +88,7 @@ const PackageBookingPage = () => {
     const fetchPackageDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/packages/${packageId}`
+          `https://travel-booking-system-nine.vercel.app/packages/${packageId}`
         );
         setPackageDetails(response.data);
         setLoading(false);
@@ -113,7 +113,7 @@ const PackageBookingPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:3000/packages/book/${packageId}`,
+        `https://travel-booking-system-nine.vercel.app/packages/book/${packageId}`,
         formData
       );
       generateInvoice({
