@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const TourPackage = require("./models/TourPackage");
 const Booking = require("./models/Booking");
-
+const User = require("./models/User");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
@@ -43,19 +44,82 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.post("/auth/login", (req, res) => {
-  const { username, password } = req.body;
+app.post("/auth/login", async (req, res) => {
+  const { email, password } = req.body;
 
-  let isAdmin = false;
-  if (username === "admin@gmail.com") {
-    isAdmin = true;
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required." });
   }
-  // Simple login logic - always return status true
-  res.json({
-    status: true,
-    message: "Login successful",
-    admin: isAdmin,
-  });
+
+  try {
+    // Find the user in the database
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    // Compare the provided password with the hashed password in the database
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    // Check if the user is an admin
+    const isAdmin = email === "admin@gmail.com";
+
+    // Respond with success and user details
+    res.json({
+      status: true,
+      message: "Login successful",
+      admin: isAdmin,
+    });
+  } catch (error) {
+    console.error("Login error:", error.message);
+    res.status(500).json({ error: "Server error. Please try again later." });
+  }
+});
+
+app.post("/auth/signup", async (req, res) => {
+  const { username, email, password } = req.body;
+  console.log(username);
+  console.log(email);
+  console.log(password);
+
+  // Basic validation
+  if (!username || !email || !password) {
+    // console.log("bt");
+    return res
+      .status(400)
+      .json({ status: false, error: "All fields are required." });
+  }
+
+  try {
+    // Check if the email is already in use
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already in use." });
+    }
+
+    // Hash the password before saving it
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Return success response
+    res.status(201).json({ message: "User registered successfully." });
+  } catch (error) {
+    console.error("Error during signup:", error.message);
+    res.status(500).json({ error: "Server error. Please try again later." });
+  }
 });
 
 app.post("/", async (req, res) => {

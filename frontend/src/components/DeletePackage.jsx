@@ -15,6 +15,7 @@ const DeletePackage = () => {
         setIsLoading(true);
         const response = await axios.get(
           "https://travel-booking-system-nine.vercel.app/packages"
+          // "http://localhost:3000/packages"
         );
         setPackages(response.data);
         setIsLoading(false);
@@ -50,7 +51,8 @@ const DeletePackage = () => {
 
       // Make delete request using package ID
       await axios.delete(
-        `https://travel-booking-system-nine.vercel.app/admin/packages/${packageToDelete._id}`
+        // `https://travel-booking-system-nine.vercel.app/admin/packages/${packageToDelete._id}`
+        `http://localhost:3000/admin/packages/${packageToDelete._id}`
       );
 
       // Update packages list

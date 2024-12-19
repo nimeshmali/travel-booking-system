@@ -11,6 +11,7 @@ const PackagesList = () => {
       try {
         const response = await axios.get(
           "https://travel-booking-system-nine.vercel.app/packages"
+          // "http://localhost:3000/packages"
         );
         setPackages(response.data);
         setIsLoading(false);

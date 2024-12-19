@@ -8,9 +8,11 @@ import {
 import Navbar from "./components/Navbar";
 import PackagesList from "./components/PackageList";
 import BookingForm from "./components/BookingForm";
-import Login from "./components/Login";
+import Login from "./components/auth/Login";
+import Signup from "./components/auth/Signup"; // Import the Signup component
 import TourPackageForm from "./components/TourPackageForm";
 import DeletePackage from "./components/DeletePackage";
+
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
@@ -33,6 +35,7 @@ function App() {
       <div className="min-h-screen bg-gray-100">
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} /> {/* New signup route */}
           <Route
             path="/"
             element={
@@ -56,7 +59,6 @@ function App() {
             element={
               <ProtectedRoute adminOnly={true}>
                 <Navbar />
-                {/* <TourPackageForm /> */}
                 <DeletePackage />
               </ProtectedRoute>
             }
@@ -67,7 +69,6 @@ function App() {
               <ProtectedRoute adminOnly={true}>
                 <Navbar />
                 <TourPackageForm />
-                {/* <DeletePackage /> */}
               </ProtectedRoute>
             }
           />
