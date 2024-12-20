@@ -114,8 +114,8 @@ const PackageBookingPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        // `https://travel-booking-system-nine.vercel.app/packages/book/${packageId}`,
-        `http://localhost:3000/packages/book/${packageId}`,
+        `https://travel-booking-system-nine.vercel.app/packages/book/${packageId}`,
+        // `http://localhost:3000/packages/book/${packageId}`,
 
         formData
       );
