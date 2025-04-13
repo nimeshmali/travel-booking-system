@@ -10,7 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/roboto": "^5.2.5",
+    "@mui/material": "^7.0.1",
     "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
     "jspdf": "^2.5.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
