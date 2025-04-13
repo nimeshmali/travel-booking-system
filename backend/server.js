@@ -11,20 +11,19 @@ const bookingRoutes = require("./routes/bookingRoutes");
 
 // Initialize app
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(
 	cors({
 		origin: ["http://localhost:5173", "https://travel-booking-system-frontend.vercel.app"],
+		credentials: true,
 	})
 );
 app.use(express.json({ limit: "10mb" }));
 
 // Connect to database
 connectDB();
-
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 // Routes
 app.use("/auth", authRoutes);
@@ -39,7 +38,12 @@ app.get("/api/health", (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
-});
+// Start server if running directly
+if (require.main === module) {
+	app.listen(PORT, () => {
+		console.log(`Server running on port ${PORT}`);
+	});
+}
+
+// Export app for serverless functions
+module.exports = app;
