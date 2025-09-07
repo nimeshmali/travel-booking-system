@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+const { v4: uuidv4 } = require("uuid");
 
 const TourPackageSchema = new mongoose.Schema(
   {
-    _id: Number, // This will be our custom ID that starts from 1
+    _id: {
+      type: String,
+      default: uuidv4,
+    },
     title: {
       type: String,
       required: true,
@@ -18,33 +21,54 @@ const TourPackageSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+
+    // ✅ Only startDate
     availableDates: [
       {
-        startDate: {
-          type: Date,
-          required: true,
-        },
-        endDate: {
-          type: Date,
-          required: true,
-        },
+        startDate: { type: Date, required: true },
       },
     ],
-    image: {
-      type: String,
+
+    durationDays: {
+      type: Number,
+      required: true, // important for "within 4 days"
+    },
+
+    seats: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+
+    // ✅ Multiple images
+    images: {
+      type: [String],
       required: true,
     },
-  },
-  {
-    _id: false, // Disable default _id generation
-  }
-);
 
-// Plugin to auto-increment ID
-TourPackageSchema.plugin(AutoIncrement, {
-  id: "tour_package_counter",
-  inc_field: "_id",
-});
+    // ✅ Single string category
+    category: {
+      type: String, // e.g., "romantic", "adventure", "family"
+      required: true,
+      trim: true,
+    },
+
+    location: {
+      country: String,
+      city: String,
+      region: String, // e.g., "Himalayas", "Goa Beach"
+    },
+
+    tags: [String], // keywords like "honeymoon", "trek", "water sports"
+
+    isInternational: {
+      type: Boolean,
+      default: false,
+    },
+    embedding: { type: [Number], index: false },
+  },
+  { versionKey: false }
+);
 
 const TourPackage = mongoose.model("TourPackage", TourPackageSchema);
 

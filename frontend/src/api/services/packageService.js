@@ -23,7 +23,6 @@ const getAllPackages = async () => {
 const deletePackage = async (packageId) => {
 	try {
 		const response = await axiosClient.delete(endpoints.DELETE_PACKAGE(packageId));
-		console.log(response);
 		return response;
 	} catch (error) {
 		throw error;
@@ -37,5 +36,24 @@ const bookPackage = async (packageId, formData) => {
 		throw error;
 	}
 };
+const createPackage = async (packageData) => {
+	try {
+		const response = await axiosClient.post(endpoints.CREATE_PACKAGE(), packageData);
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
 
-export default { getPackageDetails, bookPackage, getAllPackages, deletePackage };
+};
+
+const suggestPackage = async (query) => {
+	try {
+		const response = await axiosClient.post(endpoints.SUGGEST_PACKAGE(), { query: query });
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+
+}
+
+export default { getPackageDetails, bookPackage, getAllPackages, deletePackage, createPackage, suggestPackage };

@@ -3,22 +3,28 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const { errorHandler } = require("./middleware/errorMiddleware");
+const dotenv = require("dotenv");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
 const packageRoutes = require("./routes/packageRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 
+dotenv.config();
 // Initialize app
 const app = express();
 const PORT = process.env.PORT;
 // Middleware
+const allowedOrigins = process.env.FRONTEND_URLS
+	? process.env.FRONTEND_URLS.split(",")
+	: [];
+
 app.use(
 	cors({
-		origin: ["http://localhost:5173", "https://travel-booking-system-frontend.vercel.app"],
+		origin: allowedOrigins,
 	})
 );
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "15mb" }));
 
 // Connect to database
 connectDB();
