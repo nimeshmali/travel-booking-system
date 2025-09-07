@@ -18,7 +18,9 @@ const Signup = () => {
 
 		try {
 			const response = await authService.signup(username, email, password);
-
+			if (response.success) {
+				navigate("/login");
+			}
 
 		} catch (error) {
 			console.error("Signup failed", error);
