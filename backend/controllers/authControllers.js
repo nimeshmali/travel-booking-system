@@ -1,33 +1,35 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const Booking = require("../models/Booking");
 const { generateToken } = require("../config/jwt");
 
 // Register a new user
 const register = async (req, res) => {
 	try {
-		const { username, email, password } = req.body;
+		const { username, email, password, isAdmin } = req.body;
 
 		// Check if email already exists
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
-			return res.status(400).json({ message: "Email already in use" });
+			return res.status(400).json({ success: false, message: "Email already in use" });
 		}
 
 		// Hash password
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		// Create user
+		// Create user with role
 		const newUser = new User({
 			username,
 			email,
 			password: hashedPassword,
+			role: isAdmin ? "user" : "admin", // role-based
 		});
 
 		await newUser.save();
 
-		res.status(201).json({ message: "User registered successfully" });
+		return res.status(201).json({ success: true, message: "User registered successfully" });
 	} catch (error) {
-		res.status(500).json({ message: "Server error", error: error.message });
+		return res.status(500).json({ success: false, message: "Server error", error: error.message });
 	}
 };
 
@@ -36,52 +38,70 @@ const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
-		// Find user
 		const user = await User.findOne({ email });
 		if (!user) {
-			return res.status(401).json({ message: "Invalid credentials" });
+			return res.status(401).json({ success: false, message: "Invalid credentials" });
 		}
 
-		// Check password
 		const isMatch = await bcrypt.compare(password, user.password);
 		if (!isMatch) {
-			return res.status(401).json({ message: "Invalid credentials" });
+			return res.status(401).json({ success: false, message: "Invalid credentials" });
 		}
 
 		// Generate JWT token
 		const token = generateToken({
 			id: user._id,
-			email: user.email,
-			isAdmin: user.email === "admin@gmail.com", // This should be a field in your user model
+			role: user.role, // "user" | "admin"
 		});
 
-		res.json({
-			status: true,
+		return res.json({
+			success: true,
 			message: "Login successful",
 			token,
 			user: {
 				id: user._id,
 				username: user.username,
 				email: user.email,
-				isAdmin: user.email === "admin@gmail.com",
+				role: user.role,
 			},
 		});
 	} catch (error) {
-		res.status(500).json({ message: "Server error", error: error.message });
+		return res.status(500).json({ success: false, message: "Server error", error: error.message });
 	}
 };
 
 // Get user profile
 const getProfile = async (req, res) => {
 	try {
+		// Find user
 		const user = await User.findById(req.user.id).select("-password");
 		if (!user) {
-			return res.status(404).json({ message: "User not found" });
+			return res
+				.status(404)
+				.json({ success: false, message: "User not found" });
+
+
 		}
-		res.json(user);
+
+		// Find all bookings by user
+		const bookings = await Booking.find({ userId: req.user.id })
+			.populate("packageId", "title price availableDates")
+			.sort({ bookingDate: -1 }); // recent bookings first
+
+
+		return res.json({
+			success: true,
+			user,
+			bookings,
+		});
 	} catch (error) {
-		res.status(500).json({ message: "Server error", error: error.message });
+		return res.status(500).json({
+			success: false,
+			message: "Server error",
+			error: error.message,
+		});
 	}
 };
+
 
 module.exports = { register, login, getProfile };

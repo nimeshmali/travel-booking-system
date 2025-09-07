@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+const { v4: uuidv4 } = require("uuid");
 
 const BookingSchema = new mongoose.Schema(
   {
-    _id: Number,
+    _id: {
+      type: String,
+      default: uuidv4, // Automatically generate UUID as string
+    },
     name: {
       type: String,
       required: true,
@@ -18,29 +21,34 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    numberOfTravelers: {
-      type: Number,
+    bookingDate: {
+      type: Date,
       required: true,
-      min: 1,
-    },
-    specialRequests: {
-      type: String,
-      trim: true,
+      default: Date.now
     },
     packageId: {
+      type: String, // also better as String if you're using UUID for packages
+      required: true,
+    },
+    packageName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    amountPaid: {
       type: Number,
+      required: true,
+      min: 0,
+    },
+    userId: {
+      type: String, // also better as String if user uses UUID
       required: true,
     },
   },
   {
-    _id: false, // Disable default _id generation
+    timestamps: true, // adds createdAt and updatedAt automatically
   }
 );
-
-BookingSchema.plugin(AutoIncrement, {
-  id: "booking_counter",
-  inc_field: "_id",
-});
 
 const Booking = mongoose.model("Booking", BookingSchema);
 
