@@ -19,11 +19,7 @@ const Signup = () => {
 		try {
 			const response = await authService.signup(username, email, password);
 
-			if (response.status) {
-				navigate("/login");
-			} else {
-				setError(response.message || "Signup failed");
-			}
+
 		} catch (error) {
 			console.error("Signup failed", error);
 			setError(error.response?.data?.message || "Signup failed. Please try again.");

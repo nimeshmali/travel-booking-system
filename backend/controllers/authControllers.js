@@ -22,7 +22,7 @@ const register = async (req, res) => {
 			username,
 			email,
 			password: hashedPassword,
-			role: isAdmin ? "user" : "admin", // role-based
+			role: isAdmin ? "admin" : "user", // role-based
 		});
 
 		await newUser.save();
