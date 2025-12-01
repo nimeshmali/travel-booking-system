@@ -30,7 +30,7 @@ async function getMatchObjectFromGemini(userQuery) {
   Query: ${userQuery}
   `;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
   const result = await model.generateContent(prompt);
 
   try {
@@ -52,19 +52,14 @@ async function searchPackages(userQuery, queryEmbedding) {
 
   const matchObject = await getMatchObjectFromGemini(userQuery);
   const results = await TourPackage.aggregate([
-    // {
-    //   $vectorSearch: {
-    //     queryVector: queryEmbedding,
-    //     path: "embedding",
-    //     numCandidates: 2,
-    //     limit: 1,
-    //     index: "embedding",
-    //   },
-    // },
     {
-      $project: {
-        embedding: 0  // Exclude embedding from results to make logging cleaner
-      }
+      $vectorSearch: {
+        queryVector: queryEmbedding,
+        path: "embedding",
+        numCandidates: 2,
+        limit: 1,
+        index: "embedding",
+      },
     },
     { $match: matchObject },
   ]);

@@ -1,12 +1,29 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { pipeline } = require("@xenova/transformers");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Load model only once
+let embedderPromise = null;
 
-const getEmbedding = async (textForEmbedding)=>{
-    const model = genAI.getGenerativeModel({ model: "embedding-001" });
-		const embeddingResponse = await model.embedContent(textForEmbedding);
-		const embedding = embeddingResponse.embedding.values;
-		return embedding
+async function loadModel() {
+	if (!embedderPromise) {
+		console.log("Loading embedding model locally...");
+		embedderPromise = await pipeline(
+			"feature-extraction",
+			"Xenova/all-mpnet-base-v2"
+		);
+	}
+	return embedderPromise;
 }
 
-module.exports = {getEmbedding};
+const getEmbedding = async (text) => {
+	const embedder = await loadModel();
+
+	const result = await embedder(text, {
+		pooling: "mean",     // average pooling
+		normalize: true      // L2 normalization
+	});
+
+	// Convert tensor → JS array
+	return Array.from(result.data);
+};
+
+module.exports = { getEmbedding };
