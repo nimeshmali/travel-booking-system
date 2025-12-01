@@ -1,29 +1,30 @@
-const { pipeline } = require("@xenova/transformers");
-
-// Load model only once
-let embedderPromise = null;
+let pipelineInstance = null;
 
 async function loadModel() {
-	if (!embedderPromise) {
-		console.log("Loading embedding model locally...");
-		embedderPromise = await pipeline(
+	if (!pipelineInstance) {
+		console.log("Loading embedding model on Vercel...");
+
+		// Dynamic ESM import
+		const { pipeline } = await import("@xenova/transformers");
+
+		pipelineInstance = await pipeline(
 			"feature-extraction",
 			"Xenova/all-mpnet-base-v2"
 		);
 	}
-	return embedderPromise;
+
+	return pipelineInstance;
 }
 
-const getEmbedding = async (text) => {
+async function getEmbedding(text) {
 	const embedder = await loadModel();
 
 	const result = await embedder(text, {
-		pooling: "mean",     // average pooling
-		normalize: true      // L2 normalization
+		pooling: "mean",
+		normalize: true,
 	});
 
-	// Convert tensor → JS array
 	return Array.from(result.data);
-};
+}
 
 module.exports = { getEmbedding };
