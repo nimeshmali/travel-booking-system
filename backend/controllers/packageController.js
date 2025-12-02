@@ -2,7 +2,8 @@ const { getEmbedding } = require("../embedding");
 const cloudinary = require("../config/cloudinary");
 const { getMatchObjectFromGemini, searchPackages } = require("../matchObject");
 const TourPackage = require("../models/TourPackage");
-const { getGeminiResponse } = require("../utils/gemini");
+const { getGeminiResponse, transformSearchQueryWithAI } = require("../utils/gemini");
+
 
 // Get all packages
 const getAllPackages = async (req, res) => {
@@ -116,14 +117,7 @@ const createPackage = async (req, res) => {
 		};
 
 		// Generate embedding
-		const textForEmbedding = `
-      ${packageData.title}. ${packageData.description}.
-      Category: ${packageData.category}.
-      Location: ${packageData.location?.city || ""}, ${packageData.location?.country || ""}, ${packageData.location?.region || ""}.
-      Tags: ${packageData.tags?.join(", ")}.
-      Duration: ${packageData.durationDays} days.
-      International: ${packageData.isInternational ? "Yes" : "No"}
-    `.trim();
+		const textForEmbedding = generateEmbeddingText(packageData);
 
 		packageData.embedding = await getEmbedding(textForEmbedding);
 
@@ -143,6 +137,64 @@ const createPackage = async (req, res) => {
 	}
 };
 
+function generateEmbeddingText(packageData) {
+	const parts = [];
+
+	// 1. Title and description (most important)
+	parts.push(packageData.title);
+	parts.push(packageData.description);
+
+	// 2. Category and tags (semantic context)
+	parts.push(`This is a ${packageData.category} tour package.`);
+	if (packageData.tags && packageData.tags.length > 0) {
+		parts.push(`Perfect for: ${packageData.tags.join(", ")}.`);
+	}
+
+	// 3. Location (natural language)
+	if (packageData.location) {
+		const { city, country, region } = packageData.location;
+		if (country) {
+			const locationDesc = city
+				? `Located in ${city}, ${country}`
+				: `Located in ${country}`;
+			parts.push(locationDesc + (region ? ` in the ${region} region.` : '.'));
+		}
+	}
+
+	// 4. Duration (natural language)
+	const durationText = packageData.durationDays === 1
+		? "This is a one-day trip."
+		: packageData.durationDays <= 3
+			? `This is a short ${packageData.durationDays}-day trip.`
+			: packageData.durationDays <= 7
+				? `This is a ${packageData.durationDays}-day tour.`
+				: `This is an extended ${packageData.durationDays}-day journey.`;
+	parts.push(durationText);
+
+	// 5. Price range (natural language)
+	const priceText = packageData.price < 5000
+		? "Budget-friendly and affordable."
+		: packageData.price < 15000
+			? "Moderately priced package."
+			: packageData.price < 50000
+				? "Premium experience."
+				: "Luxury travel package.";
+	parts.push(priceText);
+
+	// 6. International/Domestic
+	parts.push(
+		packageData.isInternational
+			? "International travel destination."
+			: "Domestic travel within India."
+	);
+
+	// 7. Availability
+	parts.push(`Available for booking with ${packageData.seats} seats.`);
+
+	return parts.join(" ");
+}
+
+
 
 const suggestPackages = async (req, res) => {
 	try {
@@ -157,7 +209,8 @@ const suggestPackages = async (req, res) => {
 		const trimmedQuery = query.trim();
 
 		// Generate embedding for the search query
-		const queryEmbedding = await getEmbedding(trimmedQuery);
+		const transformedQuery = await transformSearchQueryWithAI(trimmedQuery)
+		const queryEmbedding = await getEmbedding(transformedQuery);
 
 		// Search for matching packages
 		const results = await searchPackages(trimmedQuery, queryEmbedding);
@@ -177,6 +230,8 @@ const suggestPackages = async (req, res) => {
 				)
 				.join("\n");
 
+			console.log(packageDetails)
+
 			const prompt = `
 						User is searching for: "${trimmedQuery}".
 						We found these matching packages:
@@ -192,7 +247,7 @@ const suggestPackages = async (req, res) => {
 		} else {
 			// No results or general query
 			suggestion = await getGeminiResponse(
-				`The user said: "${trimmedQuery}". Reply conversationally as a friendly travel assistant.`
+				`The user said: "${trimmedQuery}". First reply to the question and then reply conversationally as a friendly travel assistant.`
 			);
 		}
 
