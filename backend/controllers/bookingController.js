@@ -1,42 +1,45 @@
 const Booking = require("../models/Booking");
 const TourPackage = require("../models/TourPackage");
 
-// Book a package
+// Book a package directly (used by legacy/manual flows)
 const bookPackage = async (req, res) => {
-  try {
-    const { name, email, phoneNumber, bookingDate } = req.body;
-    const packageId = req.params.id;
+	try {
+		const { name, email, phoneNumber, bookingDate, paymentStatus = "paid", paymentIntentId, checkoutSessionId } = req.body;
+		const packageId = req.params.id;
 
-    // Verify package exists
-    const tourPackage = await TourPackage.findById(packageId);
-    if (!tourPackage) {
-      return res.status(404).json({ message: "Package not found" });
-    }
+		// Verify package exists
+		const tourPackage = await TourPackage.findById(packageId);
+		if (!tourPackage) {
+			return res.status(404).json({ message: "Package not found" });
+		}
 
-    // Create booking with package name and amount
-    const newBooking = new Booking({
-      name,
-      email,
-      phoneNumber,
-      packageId,
-      packageName: tourPackage.title, // Store package name
-      amountPaid: tourPackage.price, // Store amount paid
-      userId: req.user.id, // comes from auth middleware
-      bookingDate,
-    });
+		// Create booking with package name and amount
+		const newBooking = new Booking({
+			name,
+			email,
+			phoneNumber,
+			packageId,
+			packageName: tourPackage.title, // Store package name
+			amountPaid: tourPackage.price, // Store amount paid
+			userId: req.user.id, // comes from auth middleware
+			bookingDate,
+			paymentStatus,
+			paymentIntentId,
+			checkoutSessionId,
+		});
 
-    const savedBooking = await newBooking.save();
+		const savedBooking = await newBooking.save();
 
-    res.status(201).json({
-      message: "Booking successful",
-      booking: savedBooking,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to create booking",
-      error: error.message,
-    });
-  }
+		res.status(201).json({
+			message: "Booking successful",
+			booking: savedBooking,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Failed to create booking",
+			error: error.message,
+		});
+	}
 };
 
 // Get all bookings (admin only)
