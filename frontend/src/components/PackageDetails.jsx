@@ -1,4 +1,4 @@
-import { CalendarIcon, IndianRupeeIcon, UserIcon, MailIcon, PhoneIcon, MapPinIcon, TagIcon, CheckIcon } from "lucide-react";
+import { CalendarIcon, IndianRupeeIcon, UserIcon, MailIcon, PhoneIcon, MapPinIcon, TagIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import packageService from "../api/services/packageService";
@@ -16,7 +16,6 @@ const PackageDetails = () => {
     });
     const [dateError, setDateError] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
-    const [bookingSuccess, setBookingSuccess] = useState(false);
 
     // Get available dates from package data
     const upcomingDates = packageDetails?.availableDates?.map(date => date.startDate) || [];
@@ -72,21 +71,17 @@ const PackageDetails = () => {
                 bookingDate: bookingForm.selectedDate, // Backend expects 'bookingDate'
             };
 
+            // Create Stripe checkout session and redirect to payment page
+            const session = await packageService.createCheckoutSession(packageId, bookingData);
+            if (session?.url) {
+                window.location.href = session.url;
+                return;
+            }
 
-            // Call the booking service with packageId and formData
-            await packageService.bookPackage(packageId, bookingData);
-
-            // Show success animation
-            setBookingSuccess(true);
-
-            // Redirect to home after 2 seconds
-            setTimeout(() => {
-                navigate('/');
-            }, 2000);
-
+            throw new Error("Unable to start payment session");
         } catch (error) {
             console.error("Booking failed:", error);
-            const errorMessage = error.response?.data?.message || 'Booking failed. Please try again.';
+            const errorMessage = error.response?.data?.message || error.message || 'Booking failed. Please try again.';
             alert(errorMessage);
             setIsBooking(false);
         }
@@ -213,27 +208,6 @@ const PackageDetails = () => {
                     {/* Right Side - Booking Form */}
                     <div className="lg:sticky lg:top-8 h-fit">
                         <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 relative">
-                            {/* Booking Success Overlay */}
-                            {bookingSuccess && (
-                                <div className="absolute inset-0 bg-white bg-opacity-95 rounded-2xl flex items-center justify-center z-10">
-                                    <div className="text-center">
-                                        <div className="relative">
-                                            {/* Animated Success Circle */}
-                                            <div className="w-20 h-20 mx-auto mb-4 relative">
-                                                <div className="w-20 h-20 rounded-full border-4 border-green-200 absolute"></div>
-                                                <div className="w-20 h-20 rounded-full border-4 border-green-500 border-t-transparent animate-spin absolute"></div>
-                                                <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center absolute animate-pulse">
-                                                    <CheckIcon className="w-10 h-10 text-white animate-bounce" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-green-600 mb-2">Booking Confirmed!</h3>
-                                        <p className="text-gray-600 mb-2">Your tour has been successfully booked</p>
-                                        <p className="text-sm text-gray-500">Redirecting to home...</p>
-                                    </div>
-                                </div>
-                            )}
-
                             <div className="text-center mb-8">
                                 <h3 className="text-2xl font-bold text-gray-800 mb-2">Book Your Adventure</h3>
                                 <p className="text-gray-600">Fill in your details to secure your spot</p>

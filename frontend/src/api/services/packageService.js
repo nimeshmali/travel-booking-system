@@ -36,6 +36,24 @@ const bookPackage = async (packageId, formData) => {
 		throw error;
 	}
 };
+
+const createCheckoutSession = async (packageId, formData) => {
+	try {
+		const response = await axiosClient.post(endpoints.CREATE_CHECKOUT_SESSION(packageId), formData);
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const getPaymentSessionStatus = async (sessionId) => {
+	try {
+		const response = await axiosClient.get(endpoints.PAYMENT_SESSION_STATUS(sessionId));
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+};
 const createPackage = async (packageData) => {
 	try {
 		const response = await axiosClient.post(endpoints.CREATE_PACKAGE(), packageData);
@@ -53,7 +71,15 @@ const suggestPackage = async (query) => {
 	} catch (error) {
 		throw error;
 	}
+};
 
-}
-
-export default { getPackageDetails, bookPackage, getAllPackages, deletePackage, createPackage, suggestPackage };
+export default {
+	getPackageDetails,
+	bookPackage,
+	getAllPackages,
+	deletePackage,
+	createPackage,
+	suggestPackage,
+	createCheckoutSession,
+	getPaymentSessionStatus,
+};

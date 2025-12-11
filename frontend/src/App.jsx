@@ -13,6 +13,8 @@ import Agents from "./components/Agents";
 import PackageDetails from "./components/PackageDetails";
 import Profile from "./components/Profile";
 import ScrollToTop from "./components/ScrollToTop";
+import PaymentSuccess from "./components/payments/PaymentSuccess";
+import PaymentCancel from "./components/payments/PaymentCancel";
 
 function App() {
   return (
@@ -88,6 +90,26 @@ function App() {
                 <ProtectedRoute adminOnly={true}>
                   <Layout>
                     <TourPackageForm />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment-success"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PaymentSuccess />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment-cancel"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PaymentCancel />
                   </Layout>
                 </ProtectedRoute>
               }
