@@ -3,24 +3,22 @@ import {
     UserIcon,
     MailIcon,
     CalendarIcon,
-    MapPinIcon,
     IndianRupeeIcon,
     ClockIcon,
-    TagIcon,
-    LogOutIcon,
     EditIcon,
     BookmarkIcon
 } from 'lucide-react';
 import authService from '../api/services/authService';
-import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Profile = () => {
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('profile');
-    const { logout } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -38,11 +36,6 @@ const Profile = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleLogout = () => {
-        logout();
-        navigate('/');
     };
 
     const formatDate = (dateString) => {
@@ -70,20 +63,27 @@ const Profile = () => {
         const booking = new Date(bookingDate);
 
         if (booking > today) {
-            return { status: 'Upcoming', color: 'bg-blue-100 text-blue-800' };
+            return { status: 'Upcoming', variant: 'default' };
         } else if (booking.toDateString() === today.toDateString()) {
-            return { status: 'Today', color: 'bg-green-100 text-green-800' };
+            return { status: 'Today', variant: 'secondary' };
         } else {
-            return { status: 'Completed', color: 'bg-gray-100 text-gray-800' };
+            return { status: 'Completed', variant: 'outline' };
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading profile...</p>
+            <div className="min-h-screen bg-background flex items-center justify-center p-4">
+                <div className="w-full max-w-7xl space-y-8">
+                    <div className="space-y-4">
+                        <Skeleton className="h-32 w-full" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Skeleton className="h-32" />
+                            <Skeleton className="h-32" />
+                            <Skeleton className="h-32" />
+                        </div>
+                        <Skeleton className="h-96 w-full" />
+                    </div>
                 </div>
             </div>
         );
@@ -91,22 +91,19 @@ const Profile = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-red-600 mb-4">{error}</p>
-                    <button
-                        onClick={fetchProfile}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
+                    <p className="text-destructive mb-4">{error}</p>
+                    <Button onClick={fetchProfile}>
                         Retry
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
             {/* Hero Section */}
             <div className="bg-gradient-to-r from-primary-400 to-primary-700 text-white">
                 <div className="max-w-7xl mx-auto px-4 py-16">
@@ -131,18 +128,16 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
-                        {profileData?.user?.role === 'admin' ? (
-                            <button
+                        {profileData?.user?.role === 'admin' && (
+                            <Button
                                 onClick={() => navigate('/add-packages')}
-                                className="flex items-center space-x-2 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors"
+                                variant="outline"
+                                className="bg-white bg-opacity-20 hover:bg-opacity-30 border-white text-white"
                             >
                                 <EditIcon className="w-4 h-4" />
                                 <span>Add Packages</span>
-                            </button>
-                        ) : (
-                            <></>
+                            </Button>
                         )}
-
                     </div>
                 </div>
             </div>
@@ -151,132 +146,137 @@ const Profile = () => {
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    {profileData?.bookings?.length || 0}
-                                </p>
+                    <Card>
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-muted-foreground">Total Bookings</p>
+                                    <p className="text-3xl font-bold text-foreground">
+                                        {profileData?.bookings?.length || 0}
+                                    </p>
+                                </div>
+                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <BookmarkIcon className="w-6 h-6 text-blue-600" />
+                                </div>
                             </div>
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <BookmarkIcon className="w-6 h-6 text-blue-600" />
-                            </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600">Upcoming Tours</p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    {profileData?.bookings?.filter(booking =>
-                                        new Date(booking.bookingDate) > new Date()
-                                    ).length || 0}
-                                </p>
+                    <Card>
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-muted-foreground">Upcoming Tours</p>
+                                    <p className="text-3xl font-bold text-foreground">
+                                        {profileData?.bookings?.filter(booking =>
+                                            new Date(booking.bookingDate) > new Date()
+                                        ).length || 0}
+                                    </p>
+                                </div>
+                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <CalendarIcon className="w-6 h-6 text-green-600" />
+                                </div>
                             </div>
-                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <CalendarIcon className="w-6 h-6 text-green-600" />
-                            </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
 
-                    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    ₹{profileData?.bookings?.reduce((total, booking) =>
-                                        total + (booking.amountPaid || 0), 0
-                                    ).toLocaleString('en-IN') || '0'}
-                                </p>
+                    <Card>
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
+                                    <p className="text-3xl font-bold text-foreground">
+                                        ₹{profileData?.bookings?.reduce((total, booking) =>
+                                            total + (booking.amountPaid || 0), 0
+                                        ).toLocaleString('en-IN') || '0'}
+                                    </p>
+                                </div>
+                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <IndianRupeeIcon className="w-6 h-6 text-purple-600" />
+                                </div>
                             </div>
-                            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <IndianRupeeIcon className="w-6 h-6 text-purple-600" />
-                            </div>
-                        </div>
-                    </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 {/* Bookings Section */}
-                <div className="bg-white rounded-xl shadow-md border border-gray-100">
-                    <div className="p-6 border-b border-gray-200">
-                        <h2 className="text-2xl font-bold text-gray-900">My Bookings</h2>
-                        <p className="text-gray-600 mt-1">Your travel history and upcoming adventures</p>
-                    </div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>My Bookings</CardTitle>
+                        <CardDescription>Your travel history and upcoming adventures</CardDescription>
+                    </CardHeader>
 
-                    <div className="p-6">
+                    <CardContent>
                         {profileData?.bookings && profileData.bookings.length > 0 ? (
                             <div className="space-y-4">
                                 {profileData.bookings.map((booking) => {
                                     const statusInfo = getBookingStatus(booking.bookingDate);
 
                                     return (
-                                        <div key={booking._id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className="flex-1">
-                                                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                                        {booking.packageName || 'Package Not Available'}
-                                                    </h3>
+                                        <Card key={booking._id} className="hover:shadow-md transition-shadow">
+                                            <CardContent className="p-6">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="flex-1">
+                                                        <h3 className="text-xl font-semibold text-foreground mb-2">
+                                                            {booking.packageName || 'Package Not Available'}
+                                                        </h3>
 
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                                                        <div className="flex items-center">
-                                                            <UserIcon className="w-4 h-4 mr-2 text-gray-400" />
-                                                            <span>{booking.name}</span>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
+                                                            <div className="flex items-center">
+                                                                <UserIcon className="w-4 h-4 mr-2 text-muted-foreground" />
+                                                                <span>{booking.name}</span>
+                                                            </div>
+                                                            <div className="flex items-center">
+                                                                <MailIcon className="w-4 h-4 mr-2 text-muted-foreground" />
+                                                                <span>{booking.email}</span>
+                                                            </div>
+                                                            <div className="flex items-center">
+                                                                <CalendarIcon className="w-4 h-4 mr-2 text-muted-foreground" />
+                                                                <span>Tour Date: {formatDate(booking.bookingDate)}</span>
+                                                            </div>
+                                                            <div className="flex items-center">
+                                                                <ClockIcon className="w-4 h-4 mr-2 text-muted-foreground" />
+                                                                <span>Booked: {formatDateTime(booking.createdAt)}</span>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center">
-                                                            <MailIcon className="w-4 h-4 mr-2 text-gray-400" />
-                                                            <span>{booking.email}</span>
-                                                        </div>
-                                                        <div className="flex items-center">
-                                                            <CalendarIcon className="w-4 h-4 mr-2 text-gray-400" />
-                                                            <span>Tour Date: {formatDate(booking.bookingDate)}</span>
-                                                        </div>
-                                                        <div className="flex items-center">
-                                                            <ClockIcon className="w-4 h-4 mr-2 text-gray-400" />
-                                                            <span>Booked: {formatDateTime(booking.createdAt)}</span>
+                                                    </div>
+
+                                                    <div className="flex flex-col items-end space-y-2">
+                                                        <Badge variant={statusInfo.variant}>
+                                                            {statusInfo.status}
+                                                        </Badge>
+                                                        <div className="text-right">
+                                                            <p className="text-2xl font-bold text-primary">
+                                                                ₹{booking.amountPaid?.toLocaleString('en-IN') || 'N/A'}
+                                                            </p>
+                                                            <p className="text-sm text-muted-foreground">amount paid</p>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-col items-end space-y-2">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
-                                                        {statusInfo.status}
-                                                    </span>
-                                                    <div className="text-right">
-                                                        <p className="text-2xl font-bold text-green-600">
-                                                            ₹{booking.amountPaid?.toLocaleString('en-IN') || 'N/A'}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">amount paid</p>
-                                                    </div>
+                                                <div className="mt-4 pt-4 border-t border-border">
+                                                    <p className="text-sm text-muted-foreground">
+                                                        <span className="font-medium">Booking ID:</span>
+                                                        <span className="ml-2 text-primary font-mono">{booking._id}</span>
+                                                    </p>
                                                 </div>
-                                            </div>
-
-                                            <div className="mt-4 pt-4 border-t border-gray-100">
-                                                <p className="text-sm text-gray-600">
-                                                    <span className="font-medium">Booking ID:</span>
-                                                    <span className="ml-2 text-blue-600 font-mono">{booking._id}</span>
-                                                </p>
-                                            </div>
-                                        </div>
+                                            </CardContent>
+                                        </Card>
                                     );
                                 })}
                             </div>
                         ) : (
                             <div className="text-center py-12">
-                                <BookmarkIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                                <h3 className="text-xl font-medium text-gray-900 mb-2">No bookings yet</h3>
-                                <p className="text-gray-600 mb-6">Start exploring amazing destinations and make your first booking!</p>
-                                <button
-                                    onClick={() => navigate('/')}
-                                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
-                                >
+                                <BookmarkIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                                <h3 className="text-xl font-medium text-foreground mb-2">No bookings yet</h3>
+                                <p className="text-muted-foreground mb-6">Start exploring amazing destinations and make your first booking!</p>
+                                <Button onClick={() => navigate('/')}>
                                     Browse Packages
-                                </button>
+                                </Button>
                             </div>
                         )}
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
