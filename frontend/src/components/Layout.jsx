@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
 import Chatbot from "./Chatbot";
+import LazyFooter from "./LazyFooter";
 
 const Layout = ({ children }) => {
     return (
@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
             <Navbar />
             <main className="flex-grow">{children}</main>
             <Chatbot />
-            <Footer />
+            <LazyFooter />
         </div>
     );
 };
