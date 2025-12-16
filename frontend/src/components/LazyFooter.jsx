@@ -14,7 +14,6 @@ const LazyFooter = () => {
             (entries) => {
                 const entry = entries[0];
                 if (entry.isIntersecting) {
-                    console.log("LazyFooter: Footer component is now loading...");
                     setShouldLoad(true);
                     observer.disconnect();
                 }
