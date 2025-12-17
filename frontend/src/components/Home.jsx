@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FaStar } from "react-icons/fa";
 import TourPackagesSection from "./TourPackageSection";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 
 const Home = () => {
+    const handleExploreMore = useCallback(() => {
+        const el = document.getElementById("tour-packages");
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, []);
+
     return (
         <div className="w-full">
             {/* Hero Section */}
@@ -20,9 +28,24 @@ const Home = () => {
                         <h1 className="text-5xl md:text-7xl font-bold drop-shadow-lg w-2/3">
                             Discover The World With Us
                         </h1>
-                        <p className="mt-4 text-lg md:text-xl max-w-2xl">
-                            We are Tripzy, a modern travel agency dedicated to making your journeys seamless and unforgettable. From exotic getaways to weekend escapes, we bring you the best experiences at unbeatable value.
+                        <p className="mt-5 text-base md:text-lg max-w-xl text-white/90 leading-relaxed">
+                            Plan your next trip in minutes—discover packages, book fast, and travel stress-free.
                         </p>
+                        <div className="mt-8 flex flex-wrap gap-4">
+                            <Button
+                                onClick={handleExploreMore}
+                                className="bg-white text-black hover:bg-white/90 rounded-full px-8 h-12 text-base md:text-lg"
+                            >
+                                Explore more
+                            </Button>
+
+                            <Button
+                                asChild
+                                className="bg-black text-white hover:bg-black/90 rounded-full px-8 h-12 text-base md:text-lg border border-white/15"
+                            >
+                                <Link to="/signup">Join now</Link>
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
@@ -152,7 +175,9 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            <TourPackagesSection />
+            <section id="tour-packages" className="scroll-mt-24">
+                <TourPackagesSection />
+            </section>
 
 
         </div>
