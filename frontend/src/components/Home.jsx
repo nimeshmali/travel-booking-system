@@ -1,6 +1,7 @@
 import React from "react";
-import { FaAward, FaGlobe, FaHeart, FaShieldAlt, FaStar, FaUsers } from 'react-icons/fa';
+import { FaStar } from "react-icons/fa";
 import TourPackagesSection from "./TourPackageSection";
+import { Card, CardContent } from "@/components/ui/card";
 
 
 const Home = () => {
@@ -31,59 +32,75 @@ const Home = () => {
             {/* About Us Section */}
 
 
-            <section id="about" className="py-16 bg-gray-50">
-                <div className="w-2/3 mx-auto bg-white rounded-lg shadow-lg p-8">
-                    {/* Header Section */}
-                    <div className="flex justify-between items-start mb-12">
-                        <div className="flex-1">
-                            <p className="text-primary-600">hurrey!!!</p>
-                            <h2 className="text-4xl font-bold text-gray-800 text-left">
-                                About Us
-                            </h2>
-                        </div>
-                        <div className="flex-1 flex justify-end">
-                            <p className="text-sm font-light text-gray-600 leading-relaxed text-left mt-3">
-                                Premier travel agency creating unforgettable journeys worldwide. We turn your travel dreams into reality with expertise and passion
-                            </p>
-                        </div>
+            <section
+                id="about"
+                className="relative overflow-hidden py-20 bg-white"
+            >
+                {/* Header (stays on plain white) */}
+                <div className="relative mx-auto w-11/12 lg:w-2/3 max-w-6xl">
+                    <div className="max-w-4xl">
+                        <p className="text-xs font-medium tracking-[0.25em] uppercase text-primary-600">
+                            Mission, values + goals
+                        </p>
+                        <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-gray-900 leading-[1.08]">
+                            Tripzy is on a mission to make planning travel effortless. We know first-hand the
+                            challenges of booking trips globally and we’re here to make it better.
+                        </h2>
                     </div>
+                </div>
 
-                    {/* Three Feature Sections in a Row */}
-                    <div className="grid grid-cols-3 gap-8 pt-12">
-                        {/* Global Expertise */}
-                        <div className="text-left">
-                            <FaGlobe className="text-black text-lg mb-3 font-thin" />
-                            <h3 className="text-base font-semibold text-gray-800 mb-2">
-                                Global Expertise
-                            </h3>
-                            <p className="text-sm text-gray-600 leading-relaxed">
-                                With extensive knowledge of destinations worldwide, we provide insider
-                                insights and curated experiences that showcase the best each location offers.
-                            </p>
-                        </div>
+                {/* Full-width image band (only behind cards) */}
+                <div className="relative mt-14 w-full">
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: "url('/aboutUs.jpg')" }}
+                    />
+                    {/* Subtle overlay (no heavy blur) */}
+                    {/* <div className="absolute inset-0 bg-white/50" /> */}
 
-                        {/* Personalized Service */}
-                        <div className="text-left">
-                            <FaHeart className="text-black text-lg mb-3 font-thin" />
-                            <h3 className="text-base font-semibold text-gray-800 mb-2">
-                                Personalized Service
-                            </h3>
-                            <p className="text-sm text-gray-600 leading-relaxed">
-                                We craft personalized itineraries tailored to your preferences and travel
-                                style, creating trips that reflect your desires and lasting memories.
-                            </p>
-                        </div>
+                    <div className="relative mx-auto w-11/12 lg:w-2/3 max-w-6xl py-12">
+                        <div className="grid max-w-4xl grid-cols-1 sm:grid-cols-2 gap-8 items-stretch">
+                            {/* 01 - transparent (no background color) */}
+                            <Card className="h-full min-h-[240px] rounded-2xl border-none shadow-none sm:col-start-1 sm:row-start-1 bg-transparent">
+                                <CardContent className="p-8">
+                                    <p className="text-xs font-medium tracking-widest text-primary-600">01</p>
+                                    <h3 className="mt-4 text-2xl font-semibold tracking-tight text-gray-900">
+                                        Our mission
+                                    </h3>
+                                    <p className="mt-4 text-sm leading-relaxed text-gray-700">
+                                        We’re here to remove the friction from travel planning. From discovery to
+                                        booking, we make it easy to build the trip you actually want.
+                                    </p>
+                                </CardContent>
+                            </Card>
 
-                        {/* Trusted & Secure */}
-                        <div className="text-left">
-                            <FaShieldAlt className="text-black text-lg mb-3 font-thin" />
-                            <h3 className="text-base font-semibold text-gray-800 mb-2">
-                                Trusted & Secure
-                            </h3>
-                            <p className="text-sm text-gray-600 leading-relaxed">
-                                Your peace of mind is our priority. We partner with trusted suppliers and
-                                provide 24/7 support with comprehensive travel protection.
-                            </p>
+                            {/* 02 - white */}
+                            <Card className="h-full min-h-[240px] rounded-2xl border-white/60 bg-white/95 shadow-sm sm:col-start-2 sm:row-start-1">
+                                <CardContent className="p-8">
+                                    <p className="text-xs font-medium tracking-widest text-primary-600">02</p>
+                                    <h3 className="mt-4 text-2xl font-semibold tracking-tight text-gray-900">
+                                        Our values
+                                    </h3>
+                                    <p className="mt-4 text-sm leading-relaxed text-gray-700">
+                                        We’re committed to clarity, craftsmanship, and care. We keep things simple,
+                                        listen closely, and deliver on our promises—consistently improving every day.
+                                    </p>
+                                </CardContent>
+                            </Card>
+
+                            {/* 03 - white */}
+                            <Card className="h-full min-h-[240px] rounded-2xl border-white/60 bg-white/95 shadow-sm sm:col-start-1 sm:row-start-2">
+                                <CardContent className="p-8">
+                                    <p className="text-xs font-medium tracking-widest text-primary-600">03</p>
+                                    <h3 className="mt-4 text-2xl font-semibold tracking-tight text-gray-900">
+                                        Our goals
+                                    </h3>
+                                    <p className="mt-4 text-sm leading-relaxed text-gray-700">
+                                        We aim to make world-class travel accessible to everyone by building a fun,
+                                        streamlined, and trustworthy booking experience.
+                                    </p>
+                                </CardContent>
+                            </Card>
                         </div>
                     </div>
                 </div>
