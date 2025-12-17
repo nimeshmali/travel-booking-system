@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { FaStar } from "react-icons/fa";
+import { IndianRupee, Star, StarHalf } from "lucide-react";
 import TourPackagesSection from "./TourPackageSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -129,54 +129,177 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className="py-16 bg-white">
-                <div className="w-2/3 mx-auto">
-                    {/* Section Title */}
-                    <div className="text-center mb-12">
-                        <p className="text-sm text-primary-600 font-medium mb-2">WHY US</p>
-                        <h2 className="text-4xl font-bold text-gray-800">
-                            Why travel with us
-                        </h2>
-                    </div>
+            {/* Tour packages (show first) */}
+            <section id="tour-packages" className="scroll-mt-24">
+                <TourPackagesSection />
+            </section>
 
-                    {/* Top Two Cards */}
-                    <div className="flex justify-center gap-8 mb-8">
-                        {/* Happy Customers Card */}
-                        <div className="w-1/3 bg-gray-50 rounded-lg p-6 text-left justify-center items-center bg-primary-50">
-                            <div className="text-3xl font-bold text-primary-800 mb-1 pt-3">
-                                15k+
-                            </div>
-                            <p className="text-sm text-gray-600">
-                                Happy customers worldwide
+            {/* Why travel with us (improved) */}
+            <section className="relative overflow-hidden py-20 sm:py-24">
+                {/* Background image */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center brightness-90"
+                    style={{ backgroundImage: "url('/whyUs.jpg')" }}
+                />
+                {/* Readability overlays */}
+                <div className="absolute inset-0 bg-black/25" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/30 to-black/10" />
+
+                <div className="relative mx-auto w-11/12 lg:w-2/3 max-w-6xl">
+                    <div className="grid gap-10 lg:grid-cols-[1fr_360px] lg:items-start">
+                        {/* Left content */}
+                        <div className="text-left text-white">
+                            <p className="text-xs font-medium tracking-[0.25em] uppercase text-white/80">
+                                Our impact
+                            </p>
+                            <h2 className="mt-6 text-4xl md:text-5xl font-semibold tracking-tight leading-[1.08]">
+                                Why travel with us
+                            </h2>
+                            <p className="mt-5 max-w-xl text-sm md:text-base text-white/85 leading-relaxed">
+                                Transparent pricing, curated itineraries, and 24/7 support—so you can focus on the
+                                journey, not the planning.
                             </p>
                         </div>
 
-                        {/* Rating Card */}
-                        <div className="w-1/3 bg-gray-50 rounded-lg p-6 flex flex-col justify-center items-center bg-primary-50">
-                            <div className="flex items-center text-3xl font-bold text-gray-800 mb-1">
-                                4.9   <FaStar className="text-yellow-500 text-lg ml-2 w-6 h-6" />
-                            </div>
-                            <p className="text-sm text-gray-600">
-                                Average customer rating
-                            </p>
-                        </div>
-                    </div>
+                        {/* Right stacked stat cards */}
+                        <div className="grid gap-5">
+                            <Card className="rounded-2xl border-white/20 bg-white/10 text-white shadow-none backdrop-blur-md">
+                                <CardContent className="p-6">
+                                    <div className="flex items-baseline gap-3">
+                                        <div className="text-4xl md:text-5xl font-semibold tracking-tight">
+                                            15k+
+                                        </div>
+                                        <div className="text-xs uppercase tracking-widest text-white/80">
+                                            Travelers
+                                        </div>
+                                    </div>
+                                    <div className="mt-6 border-t border-white/15 pt-5 text-sm text-white/85">
+                                        Happy customers worldwide
+                                    </div>
+                                </CardContent>
+                            </Card>
 
-                    {/* Bottom Card */}
-                    <div className="flex justify-center my-3 ">
-                        <div className="w-2/3 bg-gray-50 rounded-lg p-6 text-center bg-primary-50">
-                            <div className="text-3xl font-bold text-gray-800 mb-1">
-                                $2.5M+
-                            </div>
-                            <p className="text-sm text-gray-600">
-                                Total bookings processed
-                            </p>
+                            <Card className="rounded-2xl border-white/20 bg-white/10 text-white shadow-none backdrop-blur-md">
+                                <CardContent className="p-6">
+                                    <div className="flex items-baseline gap-3">
+                                        <div className="flex items-center gap-2 text-4xl md:text-5xl font-semibold tracking-tight">
+                                            4.9
+                                            <Star
+                                                className="h-9 w-9 text-white fill-white"
+                                                strokeWidth={1.5}
+                                            />
+                                        </div>
+                                        <div className="text-xs uppercase tracking-widest text-white/80">
+                                            Rating
+                                        </div>
+                                    </div>
+                                    <div className="mt-6 border-t border-white/15 pt-5 text-sm text-white/85">
+                                        Average customer rating
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="rounded-2xl border-white/20 bg-white/10 text-white shadow-none backdrop-blur-md">
+                                <CardContent className="p-6">
+                                    <div className="flex items-baseline gap-3">
+                                        <div className="flex items-center gap-1 text-4xl md:text-5xl font-semibold tracking-tight">
+                                            <IndianRupee className="h-10 w-10 text-white/95" strokeWidth={4} />
+                                            2.5M+
+                                        </div>
+                                        <div className="text-xs uppercase tracking-widest text-white/80">
+                                            Bookings
+                                        </div>
+                                    </div>
+                                    <div className="mt-6 border-t border-white/15 pt-5 text-sm text-white/85">
+                                        Total bookings processed
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
                     </div>
                 </div>
             </section>
-            <section id="tour-packages" className="scroll-mt-24">
-                <TourPackagesSection />
+
+            {/* Community love (reviews) */}
+            <section className="py-20 bg-slate-50">
+                <div className="mx-auto w-11/12 lg:w-2/3 max-w-6xl">
+                    <div className="text-left mb-12">
+                        <p className="text-sm font-medium text-primary-600 mb-2">
+                            Community love
+                        </p>
+                        <h2 className="text-4xl font-bold text-gray-900">
+                            What travelers are saying
+                        </h2>
+                        <p className="mt-3 text-sm md:text-base text-gray-600 max-w-2xl">
+                            Real stories from our community—trusted reviews from people who booked and traveled with Tripzy.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {[
+                            {
+                                review:
+                                    "Booking was super smooth and the itinerary was perfectly paced. We had an amazing trip with zero stress.",
+                                name: "Manish Singh",
+                                rating: 5,
+                            },
+                            {
+                                review:
+                                    "Great packages and quick support. The hotel options were exactly what we wanted and check-in was effortless.",
+                                name: "Chetan Vaidada",
+                                rating: 4,
+                            },
+                            {
+                                review:
+                                    "Loved the transparency in pricing and the recommendations. We discovered places we’d have missed otherwise.",
+                                name: "Soham Sanghavi",
+                                rating: 4.5,
+                            },
+                        ].map((item) => (
+                            <Card key={item.name} className="h-full rounded-2xl bg-white border border-gray-200/60 shadow-sm">
+                                <CardContent className="p-8 h-full flex flex-col">
+                                    <p className="text-gray-700 leading-relaxed flex-1">
+                                        {item.review}
+                                    </p>
+
+                                    <div className="pt-6">
+                                        <p className="text-gray-900 font-medium">
+                                            {item.name}
+                                        </p>
+                                        <div
+                                            className="mt-2 flex items-center gap-1.5 text-sm text-gray-600"
+                                            aria-label={`Rating ${item.rating}`}
+                                        >
+                                            {Number.isInteger(item.rating) ? (
+                                                Array.from({ length: item.rating }).map((_, idx) => (
+                                                    <Star
+                                                        key={idx}
+                                                        className="h-4 w-4 text-yellow-500 fill-yellow-500"
+                                                        strokeWidth={1.5}
+                                                    />
+                                                ))
+                                            ) : (
+                                                <>
+                                                    {Array.from({ length: Math.floor(item.rating) }).map((_, idx) => (
+                                                        <Star
+                                                            key={`full-${idx}`}
+                                                            className="h-4 w-4 text-yellow-500 fill-yellow-500"
+                                                            strokeWidth={1.5}
+                                                        />
+                                                    ))}
+                                                    <StarHalf
+                                                        className="h-4 w-4 text-yellow-500 fill-yellow-500"
+                                                        strokeWidth={1.5}
+                                                    />
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
             </section>
 
 
