@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowRight, FaSpinner } from 'react-icons/fa';
-import packageService from '../api/services/packageService'; // Adjust path as needed
-import Card from './Card'; // Import your existing Card component
+import packageService from '../api/services/packageService';
+import TourPackageCard from './TourPackageCard';
+import { Button } from "@/components/ui/button";
 
 const TourPackagesSection = () => {
     const [packages, setPackages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
 
     // Fetch all packages on component mount
@@ -28,6 +30,40 @@ const TourPackagesSection = () => {
         fetchPackages();
     }, []);
 
+    const totalPackages = packages.length;
+
+    // Get 3 visible packages based on current index (circular)
+    const getVisiblePackages = () => {
+        if (totalPackages === 0) return [];
+        if (totalPackages === 1) return [packages[0], packages[0], packages[0]];
+        if (totalPackages === 2) {
+            const prev = packages[currentIndex];
+            const center = packages[(currentIndex + 1) % totalPackages];
+            const next = packages[currentIndex];
+            return [prev, center, next];
+        }
+
+        // Get 3 consecutive packages in circular manner
+        const visible = [];
+        for (let i = 0; i < 3; i++) {
+            const idx = (currentIndex + i) % totalPackages;
+            visible.push(packages[idx]);
+        }
+        return visible;
+    };
+
+    const visiblePackages = getVisiblePackages();
+
+    const handleNextSlide = useCallback(() => {
+        if (totalPackages === 0) return;
+        setCurrentIndex((prev) => (prev + 1) % totalPackages);
+    }, [totalPackages]);
+
+    const handlePrevSlide = useCallback(() => {
+        if (totalPackages === 0) return;
+        setCurrentIndex((prev) => (prev - 1 + totalPackages) % totalPackages);
+    }, [totalPackages]);
+
     const handleExploreMore = () => {
         navigate('/tours');
     };
@@ -41,7 +77,6 @@ const TourPackagesSection = () => {
                             <FaSpinner className="w-6 h-6 animate-spin text-blue-600" />
                             <span className="text-lg text-gray-600">Loading amazing tour packages...</span>
                         </div>
-                        {/* Loading skeleton cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto">
                             {Array.from({ length: 3 }).map((_, index) => (
                                 <div key={index} className="bg-gray-100 animate-pulse rounded-xl h-96"></div>
@@ -74,9 +109,6 @@ const TourPackagesSection = () => {
         );
     }
 
-    // Get first 3 packages for display
-    const featuredPackages = packages.slice(0, 3);
-
     return (
         <section className="py-16 bg-gray-50">
             <div className="container mx-auto px-4">
@@ -92,17 +124,84 @@ const TourPackagesSection = () => {
                     </p>
                 </div>
 
-                {/* Package Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 max-w-6xl mx-auto">
-                    {featuredPackages.length > 0 ? (
-                        featuredPackages.map((packageData) => (
-                            <Card
-                                key={packageData._id}
-                                packageData={packageData}
-                            />
-                        ))
+                {/* Package Carousel */}
+                <div className="max-w-6xl mx-auto mb-12 relative">
+                    {packages.length > 0 ? (
+                        <>
+                            <div className="overflow-visible py-8">
+                                <div className="flex items-center justify-center gap-4 px-16 transition-transform duration-700 ease-in-out">
+                                    {visiblePackages.map((packageData, idx) => {
+                                        const isCenter = idx === 1; // Center card is always at index 1
+                                        
+                                        return (
+                                            <div
+                                                key={`${packageData._id}-${currentIndex}-${idx}`}
+                                                className={`flex-shrink-0 transition-all duration-700 ease-in-out ${
+                                                    totalPackages === 1 
+                                                        ? 'w-full max-w-md'
+                                                        : 'w-full sm:w-1/2 lg:w-1/3'
+                                                }`}
+                                                style={{
+                                                    transform: isCenter && totalPackages > 1 ? 'scale(1.05)' : 'scale(0.9)',
+                                                    opacity: isCenter || totalPackages === 1 ? 1 : 0.6,
+                                                }}
+                                            >
+                                                <TourPackageCard
+                                                    packageData={packageData}
+                                                    isCenter={isCenter}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Custom arrows */}
+                            {totalPackages > 1 && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={handlePrevSlide}
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/10 hover:bg-white/90 transition-colors z-10"
+                                        aria-label="Previous package"
+                                    >
+                                        <span className="text-xl leading-none">‹</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleNextSlide}
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/10 hover:bg-white/90 transition-colors z-10"
+                                        aria-label="Next package"
+                                    >
+                                        <span className="text-xl leading-none">›</span>
+                                    </button>
+                                </>
+                            )}
+
+                            {/* Indicator dots */}
+                            {totalPackages > 1 && (
+                                <div className="flex justify-center gap-2 mt-8">
+                                    {packages.map((_, index) => {
+                                        const centerIndex = (currentIndex + 1) % totalPackages;
+                                        const isActive = index === centerIndex;
+                                        return (
+                                            <button
+                                                key={index}
+                                                onClick={() => setCurrentIndex((index - 1 + totalPackages) % totalPackages)}
+                                                className={`h-2 rounded-full transition-all duration-300 ${
+                                                    isActive 
+                                                        ? 'bg-blue-600 w-8' 
+                                                        : 'bg-gray-300 w-2 hover:bg-gray-400'
+                                                }`}
+                                                aria-label={`Go to package ${index + 1}`}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </>
                     ) : (
-                        <div className="col-span-full text-center py-12">
+                        <div className="text-center py-12">
                             <div className="text-gray-400 mb-4">
                                 <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -114,7 +213,7 @@ const TourPackagesSection = () => {
                     )}
                 </div>
 
-                {/* Explore More Button - Show if there are any packages */}
+                {/* Explore More Button */}
                 {packages.length > 0 && (
                     <div className="text-center">
                         <button
