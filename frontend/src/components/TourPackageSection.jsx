@@ -110,37 +110,34 @@ const TourPackagesSection = () => {
     }
 
     return (
-        <section className="py-16 bg-gray-50">
+        <section className="pb-16 bg-white">
             <div className="container mx-auto px-4">
-                {/* Section Header */}
-                <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                        Discover Amazing
-                        <span className="text-primary-600 ml-2">Tour Packages</span>
-                    </h2>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Explore our handpicked collection of extraordinary travel experiences.
-                        From breathtaking destinations to unforgettable adventures, find your perfect getaway.
-                    </p>
+                {/* Section Header (left-aligned like other Home sections) */}
+                <div className="relative mx-auto w-11/12 lg:w-2/3 max-w-6xl mb-12">
+                    <div className="max-w-4xl">
+                        <p className="text-xs font-medium tracking-[0.25em] uppercase text-primary-600">Featured</p>
+                        <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-gray-900 leading-[1.08]">
+                            Discover Amazing Tour Packages
+                        </h2>
+                    </div>
                 </div>
 
                 {/* Package Carousel */}
-                <div className="max-w-6xl mx-auto mb-12 relative">
+                <div className="max-w-6xl mx-auto mb-4 relative">
                     {packages.length > 0 ? (
                         <>
                             <div className="overflow-visible py-8">
                                 <div className="flex items-center justify-center gap-4 px-16 transition-transform duration-700 ease-in-out">
                                     {visiblePackages.map((packageData, idx) => {
                                         const isCenter = idx === 1; // Center card is always at index 1
-                                        
+
                                         return (
                                             <div
                                                 key={`${packageData._id}-${currentIndex}-${idx}`}
-                                                className={`flex-shrink-0 transition-all duration-700 ease-in-out ${
-                                                    totalPackages === 1 
-                                                        ? 'w-full max-w-md'
-                                                        : 'w-full sm:w-1/2 lg:w-1/3'
-                                                }`}
+                                                className={`flex-shrink-0 transition-all duration-700 ease-in-out ${totalPackages === 1
+                                                    ? 'w-full max-w-md'
+                                                    : 'w-full sm:w-1/2 lg:w-1/3'
+                                                    }`}
                                                 style={{
                                                     transform: isCenter && totalPackages > 1 ? 'scale(1.05)' : 'scale(0.9)',
                                                     opacity: isCenter || totalPackages === 1 ? 1 : 0.6,
@@ -188,11 +185,10 @@ const TourPackagesSection = () => {
                                             <button
                                                 key={index}
                                                 onClick={() => setCurrentIndex((index - 1 + totalPackages) % totalPackages)}
-                                                className={`h-2 rounded-full transition-all duration-300 ${
-                                                    isActive 
-                                                        ? 'bg-blue-600 w-8' 
-                                                        : 'bg-gray-300 w-2 hover:bg-gray-400'
-                                                }`}
+                                                className={`h-2 rounded-full transition-all duration-300 ${isActive
+                                                    ? 'bg-primary-600 w-8'
+                                                    : 'bg-gray-300 w-2 hover:bg-gray-400'
+                                                    }`}
                                                 aria-label={`Go to package ${index + 1}`}
                                             />
                                         );
@@ -218,9 +214,7 @@ const TourPackagesSection = () => {
                     <div className="text-center">
                         <button
                             onClick={handleExploreMore}
-                            className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-900 text-white font-medium text-base rounded-full 
-                hover:bg-gray-700 transform hover:scale-105 transition-all duration-300 
-                shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                            className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-600 text-white font-medium text-base rounded-full hover:bg-primary-700 transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-opacity-50"
                         >
                             <span>
                                 {packages.length > 3 ? `Explore More Packages` : 'View All Tours'}
@@ -228,9 +222,7 @@ const TourPackagesSection = () => {
                             <FaArrowRight className="w-4 h-4" />
                         </button>
                         {packages.length > 3 && (
-                            <p className="text-gray-600 mt-3">
-                                View all {packages.length} available packages
-                            </p>
+                            <p className="text-gray-600 mt-3">View all <span className="text-primary-600 font-semibold">{packages.length}</span> available packages</p>
                         )}
                     </div>
                 )}
